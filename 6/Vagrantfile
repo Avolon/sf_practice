@@ -1,0 +1,23 @@
+﻿Vagrant.configure("2") do |config|
+  # Определение базового образа
+  config.vm.box = "vagrant.box"
+
+  # Проброс порта для доступа к веб-серверу Django
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
+
+  # Настройка скрипта предварительной установки
+  config.vm.provision "shell", inline: <<-SHELL
+    # Обновление списка пакетов и установка Python 3 и pip
+    sudo apt-get update
+    sudo apt-get install -y python3 python3-pip
+
+    # Установка библиотеки psycopg2 и Django через pip
+    sudo pip3 install psycopg2 Django
+
+    # Создание пользователя test_avolon с домашним каталогом
+    sudo adduser --disabled-password --gecos "" --home /home/test_avolon test_avolon
+  SHELL
+
+  # Копирование пустого файла на созданную машину
+    config.vm.provision "file", source: "D:/6.txt", destination: "/home/test_avolon/6.txt", run: "always"
+end
